@@ -3,58 +3,61 @@ version: 2
 sources:
   - name: raw
     schema: gz_raw_data
+
+    # 5.1 Opsiyonel - Tazelik Testi (Eğitimde vardı, ekliyoruz)
+    loaded_at_field: "CAST(date_date AS TIMESTAMP)"
+    freshness:
+      warn_after: { count: 90, period: day }
+
     tables:
-      # 1. SALES TABLOSU (Bileşik Anahtar Testleri)
+      # --- SALES TABLOSU ---
       - name: sales
         identifier: raw_gz_sales
-        description: sales of Greenweez / we have one row per product_id found in each orders_id
+        description: Greenweez'in satışları / her orders_id'de bulunan bir product_id için bir satırımız var
         columns:
           - name: date_date
-            description: date of purchase
+            description: Satın alma tarihi
           - name: orders_id
-            description: foreign key to ship
-          - name: pdt_id
-            description: foreign key to product
+            description: Kargo (ship) tablosuna yabancı anahtar
+          - name: pdt_id # Kaynakta 'pdt_id' olduğunu unutma
+            description: Ürün (product) tablosuna yabancı anahtar
           - name: revenue
-            description: the amount paid by the customer to purchase the product. revenue = quantity * selling_price
+            description: Müşterinin ürün için ödediği tutar
           - name: quantity
-            description: the quantity of products purchased for a given order
+            description: Belirli bir sipariş için satın alınan ürün miktarı
         tests:
-          # Yöntem 1: SQL hilesi ile kombinasyon testi
-          - unique:
-              column_name: "(orders_id || '-' || pdt_id)"
-          # Yöntem 2: dbt_utils paketi ile kombinasyon testi
+          # Sales için birleşik benzersizlik testi
           - dbt_utils.unique_combination_of_columns:
               combination_of_columns:
                 - orders_id
                 - pdt_id
 
-      # 2. PRODUCT TABLOSU (Basit Anahtar Testleri)
+      # --- PRODUCT TABLOSU ---
       - name: product
         identifier: raw_gz_product
-        description: products of Greenweez
+        description: Greenweez'in ürünleri
         columns:
           - name: products_id
-            description: Primary key
+            description: Birincil anahtar (Primary key)
             tests:
-              - unique
-              - not_null
-          - name: purchase_price
-            description: the purchase price of the product
+              - unique # Test 1: Benzersiz olmalı
+              - not_null # Test 2: Boş olmamalı
+          - name: purchse_price # Kaynakta 'purchse_price' olduğunu unutma
+            description: Ürünün satın alma fiyatı
 
-      # 3. SHIP TABLOSU (Basit Anahtar Testleri)
+      # --- SHIP TABLOSU ---
       - name: ship
         identifier: raw_gz_ship
-        description: shipping data for Greenweez orders
+        description: Greenweez siparişleri için nakliye verileri
         columns:
           - name: orders_id
-            description: Primary key
+            description: Birincil anahtar (Primary key)
             tests:
-              - unique
-              - not_null
+              - unique # Test 1: Benzersiz olmalı
+              - not_null # Test 2: Boş olmamalı
           - name: shipping_fee
-            description: the price the customer pays for shipping
-          - name: log_cost
-            description: the cost of preparing the parcel in the distribution centre/warehouse
+            description: Müşterinin kargo için ödediği ücret
+          - name: logcost # Kaynakta 'logcost' olduğunu unutma
+            description: Dağıtım merkezindeki hazırlık maliyeti
           - name: ship_cost
-            description: shipping cost paid by Greenweez to the carrier/logistics provider
+            description: Greenweez'in taşıyıcıya ödediği kargo maliyeti
