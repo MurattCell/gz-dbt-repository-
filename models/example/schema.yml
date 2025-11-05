@@ -1,17 +1,60 @@
-# schema.yml
 version: 2
 
 sources:
   - name: raw
     schema: gz_raw_data
     tables:
+      # 1. SALES TABLOSU (Bileşik Anahtar Testleri)
       - name: sales
         identifier: raw_gz_sales
+        description: sales of Greenweez / we have one row per product_id found in each orders_id
+        columns:
+          - name: date_date
+            description: date of purchase
+          - name: orders_id
+            description: foreign key to ship
+          - name: pdt_id
+            description: foreign key to product
+          - name: revenue
+            description: the amount paid by the customer to purchase the product. revenue = quantity * selling_price
+          - name: quantity
+            description: the quantity of products purchased for a given order
+        tests:
+          # Yöntem 1: SQL hilesi ile kombinasyon testi
+          - unique:
+              column_name: "(orders_id || '-' || pdt_id)"
+          # Yöntem 2: dbt_utils paketi ile kombinasyon testi
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - orders_id
+                - pdt_id
+
+      # 2. PRODUCT TABLOSU (Basit Anahtar Testleri)
       - name: product
         identifier: raw_gz_product
+        description: products of Greenweez
+        columns:
+          - name: products_id
+            description: Primary key
+            tests:
+              - unique
+              - not_null
+          - name: purchase_price
+            description: the purchase price of the product
+
+      # 3. SHIP TABLOSU (Basit Anahtar Testleri)
       - name: ship
         identifier: raw_gz_ship
-
-
-
-                
+        description: shipping data for Greenweez orders
+        columns:
+          - name: orders_id
+            description: Primary key
+            tests:
+              - unique
+              - not_null
+          - name: shipping_fee
+            description: the price the customer pays for shipping
+          - name: log_cost
+            description: the cost of preparing the parcel in the distribution centre/warehouse
+          - name: ship_cost
+            description: shipping cost paid by Greenweez to the carrier/logistics provider
