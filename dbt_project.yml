@@ -19,10 +19,10 @@ clean-targets:
 models:
   my_new_project:
     example:
-      +materialized:  table
+      +materialized: table
 
     mart:
-      +materialized:  table
+      +materialized: table
 
       finance:
-        +schema:  finance
+        +schema: finance
