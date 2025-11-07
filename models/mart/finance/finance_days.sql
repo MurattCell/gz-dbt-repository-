@@ -1,5 +1,3 @@
--- models/mart/finance_days.sql
--- Bu, 'int_orders_operational' modelini alır ve güne göre gruplar.
 
 WITH orders_per_day AS (
 	SELECT
