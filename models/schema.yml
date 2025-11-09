@@ -4,7 +4,7 @@ sources:
   - name: raw
     schema: gz_raw_data
 
-    # 5.1 Opsiyonel - Tazelik Testi (Eğitimde vardı, ekliyoruz)
+   
     loaded_at_field: "CAST(date_date AS TIMESTAMP)"
     freshness:
       warn_after: { count: 90, period: day }
@@ -19,7 +19,7 @@ sources:
             description: Satın alma tarihi
           - name: orders_id
             description: Kargo (ship) tablosuna yabancı anahtar
-          - name: pdt_id # Kaynakta 'pdt_id' olduğunu unutma
+          - name: pdt_id 
             description: Ürün (product) tablosuna yabancı anahtar
           - name: revenue
             description: Müşterinin ürün için ödediği tutar
@@ -28,9 +28,11 @@ sources:
         tests:
           # Sales için birleşik benzersizlik testi
           - dbt_utils.unique_combination_of_columns:
-              combination_of_columns:
-                - orders_id
-                - pdt_id
+
+              arguments:
+                combination_of_columns:
+                  - orders_id
+                  - pdt_id
 
       # --- PRODUCT TABLOSU ---
       - name: product
@@ -40,9 +42,9 @@ sources:
           - name: products_id
             description: Birincil anahtar (Primary key)
             tests:
-              - unique # Test 1: Benzersiz olmalı
-              - not_null # Test 2: Boş olmamalı
-          - name: purchse_price # Kaynakta 'purchse_price' olduğunu unutma
+              - unique 
+              - not_null 
+          - name: purchse_price
             description: Ürünün satın alma fiyatı
 
       # --- SHIP TABLOSU ---
@@ -53,11 +55,24 @@ sources:
           - name: orders_id
             description: Birincil anahtar (Primary key)
             tests:
-              - unique # Test 1: Benzersiz olmalı
-              - not_null # Test 2: Boş olmamalı
+              - unique 
+              - not_null
           - name: shipping_fee
             description: Müşterinin kargo için ödediği ücret
-          - name: logcost # Kaynakta 'logcost' olduğunu unutma
+          - name: logcost 
             description: Dağıtım merkezindeki hazırlık maliyeti
           - name: ship_cost
             description: Greenweez'in taşıyıcıya ödediği kargo maliyeti
+
+      # --- YENİ EKLENEN PAZARLAMA KAYNAKLARI ---
+      - name: adwords
+        identifier: raw_gz_adwords
+
+      - name: bing
+        identifier: raw_gz_bing
+
+      - name: criteo
+        identifier: raw_gz_criteo
+
+      - name: facebook
+        identifier: raw_gz_facebook
