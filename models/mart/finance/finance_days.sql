@@ -16,6 +16,7 @@ WITH orders_per_day AS (
 )
 SELECT
     date_date
+    , nb_transactions
     , revenue
     , margin
     , operational_margin
