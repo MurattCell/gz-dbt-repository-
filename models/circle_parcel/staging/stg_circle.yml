@@ -1,0 +1,29 @@
+version: 2
+sources :
+   - name: raw_data_circle
+     database: ninth-iris-474811-t7
+     schema: raw_data_circle
+     tables:
+       - name: raw_cc_parcel
+       - name: raw_cc_parcel_product
+models:
+  - name: stg_cc_parcel
+    description: "Kargo (Parcel) bilgilerinin temizlenmiş hali"
+    columns:
+      - name: parcel_id
+        description: "Her kargonun benzersiz kimliği"
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_cc_parcel_products
+    description: "Kargo içerisindeki ürünlerin temizlenmiş hali"
+    columns:
+      - name: parcel_id
+        description: "Kargo kimliği"
+        tests:
+          - not_null
+      - name: model_name
+        description: "Ürün modeli"
+        tests:
+          - not_null
